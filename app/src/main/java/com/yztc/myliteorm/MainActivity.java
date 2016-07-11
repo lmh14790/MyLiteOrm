@@ -1,7 +1,9 @@
 package com.yztc.myliteorm;
 
+import android.app.ActivityManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -38,9 +40,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.inject(this);
         liteOrm = LiteOrm.newSingleInstance(this, "liteOrm.db");
+        getProcessInfo();
 
     }
-   //页面增删改查的点击事件
+
+    /**
+     * 获取进程信息
+     */
+    private void getProcessInfo() {
+        String processName = null;
+        int pid = android.os.Process.myPid();
+        ActivityManager mActivityManager = (ActivityManager) this
+                .getSystemService(ACTIVITY_SERVICE);
+        for (ActivityManager.RunningAppProcessInfo appProcess : mActivityManager
+                .getRunningAppProcesses()) {
+            if (appProcess.pid == pid) {
+                processName = appProcess.processName;
+                break;
+            }
+        }
+        Log.e("tag", String.format("当前进程名为：%s进程pid为：%s", processName, pid + ""));
+    }
+
+    //页面增删改查的点击事件
     @OnClick({R.id.insert, R.id.update, R.id.select, R.id.delete})
     public void onClick(View view) {
         switch (view.getId()) {
